@@ -66,7 +66,7 @@ Is
           id_usuario_product AS paquete,
           empleado_id        AS empleado_id,
           id_origen          AS id_origen,
-          terminos_aceptados AS terminos_aceptados
+          to_char(terminos_aceptados,'YYYYMMDD') AS terminos_aceptados
            FROM mp_usuarios_ext
           WHERE 1 = 1
           AND id_usuario_account IS NOT NULL
@@ -81,7 +81,8 @@ Is
    begin
         DBMS_APPLICATION_INFO.Set_action (Action_name => 'PR_MP_USUARIOS_INST');
         Open P_out_cur For
-        select id_usuario,fecha_login
+        select id_usuario     as id_cliente,
+                to_char(fecha_login,'YYYYMMDDHH24MI')    as fecha_login
         from  mp_usuarios_inst
         where id_instalacion = 8140;
    Exception
@@ -96,10 +97,10 @@ Is
         select id_usuario          as id_cliente, 
                 id_pase             as id_pase, 
                 username            as username,
-                fecha_alta          as fecha_alta, 
-                fecha_modificacion  as fecha_modificacion, 
-                baja_logica         as baja_logica
-        from  app_esdc81r.mp_usuarios_pase;
+                to_char(fecha_alta,'YYYYMMDD') as fecha_alta, 
+                to_char(fecha_modificacion,'YYYYMMDD')  as fecha_modificacion, 
+                to_char(baja_logica,'YYYYMMDDHH24MI')         as baja_logica
+        from  mp_usuarios_pase;
    Exception
         When Others Then
         Raise_application_error (-20000, 'PR_MP_USUARIOS_PASE' || SQLERRM);
@@ -152,7 +153,7 @@ Is
                V_data  := V_data || Rtrim (RPAD (V_date, 22) );
             Else
                DBMS_SQL.COLUMN_VALUE (V_cursor, I, V_varchar2);
-               V_data  := V_data || Rtrim (RPAD (V_varchar2, V_desc (I).Col_max_len + 1) );
+               V_data  := V_data || '"' || Rtrim (RPAD (V_varchar2, V_desc (I).Col_max_len + 1) ) || '"';
             End If;
             V_data  := V_data || P_sep ;
          End Loop;
