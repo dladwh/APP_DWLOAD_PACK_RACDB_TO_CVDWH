@@ -17,6 +17,8 @@ IS
 --------------------------------------------------------------------------------
   PROCEDURE PR_MP_USUARIOS_PASE(p_out_cur OUT sys_refcursor);
 --------------------------------------------------------------------------------
+  PROCEDURE PR_MP_USUARIOS_PAGO(p_out_cur OUT sys_refcursor);
+--------------------------------------------------------------------------------
   PROCEDURE REFCURSOR_TO_FILE(
       P_cur IN OUT Sys_refcursor ,
       P_sep IN VARCHAR2 DEFAULT '|' ,
@@ -106,6 +108,20 @@ Is
         Raise_application_error (-20000, 'PR_MP_USUARIOS_PASE' || SQLERRM);
       
    end PR_MP_USUARIOS_PASE;
+--------------------------------------------------------------------------------
+   PROCEDURE PR_MP_USUARIOS_PAGO(p_out_cur OUT sys_refcursor) is
+   begin
+        DBMS_APPLICATION_INFO.Set_action (Action_name => 'PR_MP_USUARIOS_PAGO');
+        Open P_out_cur For
+        select id_usuario as id_cliente, 
+                pin        as pin, 
+                estado     as estado
+        from  MP_USUARIOS_PAGO;
+   Exception
+        When Others Then
+        Raise_application_error (-20000, 'PR_MP_USUARIOS_PASE' || SQLERRM);
+      
+   end PR_MP_USUARIOS_PAGO;
 --------------------------------------------------------------------------------
    Procedure REFCURSOR_TO_FILE (
       P_cur        In Out   Sys_refcursor
