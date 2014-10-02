@@ -1,5 +1,5 @@
 --------------------------------------------------------
--- Archivo creado  - miércoles-octubre-01-2014   
+-- Archivo creado  - jueves-octubre-02-2014   
 --------------------------------------------------------
 --------------------------------------------------------
 --  DDL for Package PACK_RACDB_TO_CVDWH
@@ -18,6 +18,12 @@ IS
   PROCEDURE PR_MP_USUARIOS_PASE(p_out_cur OUT sys_refcursor);
 --------------------------------------------------------------------------------
   PROCEDURE PR_MP_USUARIOS_PAGO(p_out_cur OUT sys_refcursor);
+--------------------------------------------------------------------------------
+  procedure pr_usuario_dispositivo_pago(p_out_cur OUT sys_refcursor);
+--------------------------------------------------------------------------------
+  procedure pr_mp_usuarios_ext_log(p_out_cur OUT sys_refcursor);
+--------------------------------------------------------------------------------
+  procedure pr_USUARIO_DISPOSITIVO(p_out_cur OUT sys_refcursor);
 --------------------------------------------------------------------------------
   PROCEDURE REFCURSOR_TO_FILE(
       P_cur IN OUT Sys_refcursor ,
@@ -122,6 +128,63 @@ Is
         Raise_application_error (-20000, 'PR_MP_USUARIOS_PASE' || SQLERRM);
       
    end PR_MP_USUARIOS_PAGO;
+--------------------------------------------------------------------------------
+  procedure pr_usuario_dispositivo_pago(
+    p_out_cur OUT sys_refcursor
+  )
+  
+  is
+  
+  begin
+  
+    open p_out_cur for
+    select  
+     id_usuario
+    ,id_pago
+    ,id_usuario_dispositivo
+    from usuario_dispositivo_pago
+    where id_instalacion = 8140 and fecha_alta > trunc(sysdate -100); 
+    
+  end;
+--------------------------------------------------------------------------------
+  procedure pr_mp_usuarios_ext_log(
+    p_out_cur OUT sys_refcursor
+  )
+  
+  is
+  
+  begin
+  
+    open p_out_cur for
+    select  
+     id_instalacion
+    ,id_usuario
+    ,id_usuario_account
+    ,to_char(fecha_alta,'YYYYMMDDHH24MI') as fecha_alta
+    from mp_usuarios_ext_log
+    where id_instalacion = 8140 and fecha_alta > trunc(sysdate -100); 
+    
+  end pr_mp_usuarios_ext_log;
+--------------------------------------------------------------------------------
+  procedure pr_USUARIO_DISPOSITIVO(
+    p_out_cur OUT sys_refcursor
+  )
+  is
+  
+  begin
+  
+    open p_out_cur for
+     Select Id_Usuario_Dispositivo,
+      Device_Model,
+      Device_Manufacturer,
+      Device_Category,
+      Device_Type,
+      Device_So_Version
+       From Usuario_Dispositivo
+      Where Fecha_Alta Between Trunc(Sysdate)-1 And Trunc(Sysdate);
+    
+  end pr_USUARIO_DISPOSITIVO;
+
 --------------------------------------------------------------------------------
    Procedure REFCURSOR_TO_FILE (
       P_cur        In Out   Sys_refcursor
