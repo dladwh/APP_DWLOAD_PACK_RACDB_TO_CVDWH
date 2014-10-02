@@ -157,8 +157,7 @@ Is
   
     open p_out_cur for
     select  
-     id_instalacion
-    ,id_usuario
+     id_usuario
     ,id_usuario_account
     ,to_char(fecha_alta,'YYYYMMDDHH24MI') as fecha_alta
     from mp_usuarios_ext_log
@@ -184,7 +183,6 @@ Is
       Where Fecha_Alta Between Trunc(Sysdate)-1 And Trunc(Sysdate);
     
   end pr_USUARIO_DISPOSITIVO;
-
 --------------------------------------------------------------------------------
    Procedure REFCURSOR_TO_FILE (
       P_cur        In Out   Sys_refcursor
